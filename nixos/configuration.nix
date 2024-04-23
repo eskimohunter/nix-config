@@ -53,7 +53,9 @@
 
   # Enable the KDE Plasma Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  #services.xserver.desktopManager.plasma5.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  services.xserver.displayManager.sddm.wayland.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -99,8 +101,8 @@
   };
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "robert";
+  #services.xserver.displayManager.autoLogin.enable = true;
+  #services.xserver.displayManager.autoLogin.user = "robert";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -154,7 +156,7 @@
       fi
 
       # otherwise authenticate with tailscale
-      ${tailscale}/bin/tailscale up -ssh -authkey tskey-auth-kxw3bQ1CNTRL-TXvhq1MiTgHBgAx8m9ivdH7puT8aFoQR
+      ${tailscale}/bin/tailscale up -ssh -authkey tskey-auth-kxw3bQ1CNTRL-TXvhq1MiTgHBgAx8m9ivdH7puT8aFoQR --accept-routes
     '';
   };
 
@@ -167,34 +169,34 @@
     '';
   };
 
-  #Update servive, every 5 minutes update from GitHub
-  systemd.timers."update" = {
-  wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnBootSec = "5m";
-      OnUnitActiveSec = "5m";
-      Unit = "update.service";
-    };
-  };
-  systemd.services."update" = {
-    path = [
-      pkgs.git
-      pkgs.hostname
-      pkgs.nixos-rebuild
-      pkgs.nix
-      pkgs.nixos-install-tools
-      pkgs.flatpak
-      pkgs.sudo
-    ];
-    script = ''
-      set -euxo pipefail
-      ${pkgs.bash}/bin/bash /root/infra/NixOS/Update.sh>/root/Update_$(date +%H_%M).log 2>&1
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "root";
-    };
-  };
+  # #Update servive, every 5 minutes update from GitHub
+  # systemd.timers."update" = {
+  # wantedBy = [ "timers.target" ];
+  #   timerConfig = {
+  #     OnBootSec = "5m";
+  #     OnUnitActiveSec = "5m";
+  #     Unit = "update.service";
+  #   };
+  # };
+  # systemd.services."update" = {
+  #   path = [
+  #     pkgs.git
+  #     pkgs.hostname
+  #     pkgs.nixos-rebuild
+  #     pkgs.nix
+  #     pkgs.nixos-install-tools
+  #     pkgs.flatpak
+  #     pkgs.sudo
+  #   ];
+  #   script = ''
+  #     set -euxo pipefail
+  #     ${pkgs.bash}/bin/bash /root/infra/NixOS/Update.sh>/root/Update_$(date +%H_%M).log 2>&1
+  #   '';
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     User = "root";
+  #   };
+  # };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
